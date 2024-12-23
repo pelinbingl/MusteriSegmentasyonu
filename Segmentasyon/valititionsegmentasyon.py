@@ -45,21 +45,39 @@ def visualize_clusters(X_train, X_test, y_train_kmeans, y_test_kmeans, kmeans, n
     X_train_pca = pca.fit_transform(X_train)
     X_test_pca = pca.transform(X_test)
     cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
-    
-    plt.figure(figsize=(10, 7))
-    
+
+    plt.figure(figsize=(12, 8))
+
     # Eğitim verisi
-    plt.scatter(X_train_pca[:, 0], X_train_pca[:, 1], c=y_train_kmeans, cmap='viridis', alpha=0.7, s=100, label="Eğitim Verisi")
+    scatter_train = plt.scatter(
+        X_train_pca[:, 0], X_train_pca[:, 1], 
+        c=y_train_kmeans, cmap='viridis', alpha=0.7, s=100, label="Eğitim Verisi"
+    )
     # Test verisi
-    plt.scatter(X_test_pca[:, 0], X_test_pca[:, 1], c=y_test_kmeans, cmap='cool', alpha=0.7, s=80, label="Test Verisi")
+    scatter_test = plt.scatter(
+        X_test_pca[:, 0], X_test_pca[:, 1], 
+        c=y_test_kmeans, cmap='cool', alpha=0.7, s=80, label="Test Verisi"
+    )
     # Küme merkezleri
-    plt.scatter(cluster_centers_pca[:, 0], cluster_centers_pca[:, 1], color='red', marker='X', s=300, label="Küme Merkezleri")
-    
+    plt.scatter(
+        cluster_centers_pca[:, 0], cluster_centers_pca[:, 1], 
+        color='red', marker='X', s=300, label="Küme Merkezleri"
+    )
+
     # Kullanıcı girişi (isteğe bağlı)
     if new_data is not None:
         new_data_pca = pca.transform(new_data)
-        plt.scatter(new_data_pca[:, 0], new_data_pca[:, 1], color='black', marker='P', s=200, label="Yeni Veri")
-    
+        plt.scatter(
+            new_data_pca[:, 0], new_data_pca[:, 1], 
+            color='black', marker='P', s=200, label="Yeni Veri"
+        )
+
+    # Renkler ve kümeler için ayrı bir gösterge ekle
+    handles, _ = scatter_train.legend_elements(prop="colors")
+    cluster_labels = [f"Küme {i}" for i in range(kmeans.n_clusters)]
+    legend_colors = plt.legend(handles, cluster_labels, title="Kümeler", loc="upper right", fontsize="small")
+    plt.gca().add_artist(legend_colors)
+
     plt.title("KMeans Kümeleme Sonuçları")
     plt.xlabel("PCA 1")
     plt.ylabel("PCA 2")
